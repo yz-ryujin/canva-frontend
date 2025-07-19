@@ -258,7 +258,7 @@
 
                 try {
                     // This now calls your actual backend to securely exchange the code for a token.
-                    const response = await fetch('https://canva-backend-sage.vercel.app/api/canva/token', {
+                    const response = await fetch('https://canva-backend-sage.vercel.app/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
