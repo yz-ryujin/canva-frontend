@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfica Legos - Integração com Canva</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            color: #F9FAFB;
+        }
+
+        .text-gold {
+            color: #FBBF24;
+        }
+
+        .bg-gold {
+            background-color: #FBBF24;
+        }
+
+        .hover-bg-gold-dark:hover {
+            background-color: #F59E0B;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FBBF24;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900">
+
+    <!-- Header -->
+    <header class="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50 shadow-md shadow-black/20">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-3xl font-black tracking-wider text-white">
+                GRAFICA <span class="text-gold">LEGOS</span>
+            </div>
+            <a href="#" class="text-white font-semibold hover:text-gold">Voltar ao Site Principal</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-16">
+        <!-- 
+          ========================================
+          🎨 CREATE WITH CANVA SECTION (NEW)
+          ========================================
+          - Handles OAuth 2.0 authentication.
+          - Initiates design creation in Canva.
+          - Displays the final design from Canva.
+        -->
+        <section id="canva-creator">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">🎨 Crie sua Arte com <span class="text-gold">Canva</span>
+                </h2>
+                <p class="mt-4 text-lg text-gray-400 max-w-3xl mx-auto">Use o poder do Canva para criar sua arte
+                    diretamente aqui. Conecte sua conta, crie seu design e envie para nós com um clique.</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-gray-800 p-8 rounded-lg shadow-2xl">
+                <!-- Step 1: Authentication -->
+                <div id="canva-auth-step">
+                    <h3 class="font-bold text-2xl mb-4 text-center">Passo 1: Conecte sua conta Canva</h3>
+                    <p class="text-center text-gray-400 mb-6">Para começar, autorize nosso site a se conectar com sua
+                        conta Canva de forma segura.</p>
+                    <button id="canva-login-button" class="w-full max-w-sm mx-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center text-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-lock mr-3"></i> Conectar com Canva
+                    </button>
+                </div>
+
+                <!-- Step 2: Create Design -->
+                <div id="canva-create-step" class="hidden">
+                    <h3 class="font-bold text-2xl mb-4 text-center">Passo 2: Crie sua Arte</h3>
+                    <p class="text-center text-gray-400 mb-6">Você está conectado! Agora clique no botão abaixo para
+                        abrir o editor do Canva e começar a criar.</p>
+                    <button id="canva-create-design-button" class="w-full max-w-sm mx-auto bg-gold text-gray-900 font-bold py-3 px-6 rounded-lg flex items-center justify-center text-lg hover-bg-gold-dark transition-colors">
+                        <i class="fas fa-palette mr-3"></i> Criar sua Arte no Canva
+                    </button>
+                </div>
+
+                <!-- Step 3: Design Preview & Send -->
+                <div id="canva-preview-step" class="hidden">
+                    <h3 class="font-bold text-2xl mb-4 text-center">Passo 3: Revise e Envie</h3>
+                    <p class="text-center text-gray-400 mb-6">Sua arte foi criada com sucesso! Confira a prévia abaixo e
+                        envie para nossa equipe de produção.</p>
+                    <div id="canva-design-preview"
+                        class="mt-6 border-2 border-dashed border-gray-600 rounded-lg p-4 min-h-[300px] flex items-center justify-center bg-gray-900">
+                        <div id="preview-spinner" class="spinner hidden"></div>
+                        <img id="design-thumbnail" src="" alt="Prévia do Design" class="max-w-full max-h-80 rounded-md hidden">
+                        <p id="preview-placeholder" class="text-gray-500">A prévia do seu design aparecerá aqui...</p>
+                    </div>
+                    <button id="canva-send-to-print-button" class="w-full max-w-sm mx-auto mt-6 bg-green-600 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center text-lg hover:bg-green-700 transition-colors hidden">
+                        <i class="fas fa-paper-plane mr-3"></i> Enviar para a Gráfica
+                    </button>
+                </div>
+
+                <div id="canva-error-message" class="text-red-400 text-center mt-6 hidden"></div>
+                <div id="canva-success-message" class="text-green-400 text-center mt-6 hidden"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Configuration ---
+            // IMPORTANT: Replace with your actual Client ID from the Canva Developer Portal.
+            const CANVA_CLIENT_ID = 'OC-AZgkoQIxG6Pl'; 
+            // This must match exactly one of the URLs you set in the Canva Developer Portal.
+            const REDIRECT_URI = window.location.origin + window.location.pathname;
+            
+            // --- UI Elements ---
+            const authStep = document.getElementById('canva-auth-step');
+            const createStep = document.getElementById('canva-create-step');
+            const previewStep = document.getElementById('canva-preview-step');
+            const loginButton = document.getElementById('canva-login-button');
+            const createDesignButton = document.getElementById('canva-create-design-button');
+            const sendToPrintButton = document.getElementById('canva-send-to-print-button');
+            const designPreview = document.getElementById('canva-design-preview');
+            const designThumbnail = document.getElementById('design-thumbnail');
+            const previewSpinner = document.getElementById('preview-spinner');
+            const previewPlaceholder = document.getElementById('preview-placeholder');
+            const errorMessage = document.getElementById('canva-error-message');
+            const successMessage = document.getElementById('canva-success-message');
+
+            // --- State Management ---
+            let accessToken = localStorage.getItem('canva_access_token');
+            const urlParams = new URLSearchParams(window.location.search);
+            const authCode = urlParams.get('code');
+            const designId = urlParams.get('design_id');
+
+            // --- Initialization ---
+            if (accessToken) {
+                showCreateStep();
+            }
+            if (authCode) {
+                handleAuthRedirect(authCode);
+            }
+            if (designId) {
+                showPreviewStep(designId);
+            }
+            
+            // --- Event Listeners ---
+            loginButton.addEventListener('click', redirectToCanvaAuth);
+            createDesignButton.addEventListener('click', createCanvaDesign);
+            sendToPrintButton.addEventListener('click', () => {
+                showSuccess("Design enviado para a gráfica com sucesso! Entraremos em contato em breve.");
+                sendToPrintButton.disabled = true;
+            });
+
+            // --- Functions ---
+
+            /**
+             * Generates a random string for the state and PKCE code verifier.
+             */
+            function generateRandomString(length) {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+                return result;
+            }
+
+            /**
+             * Creates a SHA-256 hash for the PKCE code challenge.
+             */
+            async function generateCodeChallenge(verifier) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(verifier);
+                const digest = await window.crypto.subtle.digest('SHA-256', data);
+                return window.btoa(String.fromCharCode(...new Uint8Array(digest)))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=+$/, '');
+            }
+            
+            /**
+             * Redirects the user to the Canva authorization page.
+             */
+            async function redirectToCanvaAuth() {
+                const state = generateRandomString(32);
+                const codeVerifier = generateRandomString(128);
+                localStorage.setItem('canva_pkce_verifier', codeVerifier);
+                localStorage.setItem('canva_oauth_state', state);
+
+                const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+                const scopes = [
+                    'design:content:write',
+                    'design:content:read',
+                    'design:meta:read',
+                ].join(' ');
+
+                const authUrl = new URL('https://www.canva.com/api/oauth/authorize');
+                authUrl.searchParams.set('response_type', 'code');
+                authUrl.searchParams.set('client_id', CANVA_CLIENT_ID);
+                authUrl.searchParams.set('redirect_uri', REDIRECT_URI);
+                authUrl.searchParams.set('scope', scopes);
+                authUrl.searchParams.set('state', state);
+                authUrl.searchParams.set('code_challenge_method', 'S256');
+                authUrl.searchParams.set('code_challenge', codeChallenge);
+
+                window.location.href = authUrl.toString();
+            }
+
+            /**
+             * Handles the redirect from Canva after user authorization.
+             * Exchanges the authorization code for an access token by calling the backend.
+             */
+            async function handleAuthRedirect(code) {
+                const storedState = localStorage.getItem('canva_oauth_state');
+                const requestState = urlParams.get('state');
+                if (storedState !== requestState) {
+                    showError("Erro de segurança: o estado da requisição não corresponde.");
+                    return;
+                }
+
+                const codeVerifier = localStorage.getItem('canva_pkce_verifier');
+                if (!codeVerifier) {
+                    showError("Erro: Verificador PKCE não encontrado.");
+                    return;
+                }
+                
+                try {
+                    // This now calls your actual backend to securely exchange the code for a token.
+                    const response = await fetch('https://canva-backend-git-main-franklins-projects-8a4abd97.vercel.app/api/canva/token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            code: code,
+                            code_verifier: codeVerifier,
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Falha ao trocar o código pelo token');
+                    }
+
+                    const data = await response.json();
+                    accessToken = data.access_token;
+                    localStorage.setItem('canva_access_token', accessToken);
+
+                    // Clean up URL and local storage
+                    window.history.replaceState({}, document.title, REDIRECT_URI);
+                    localStorage.removeItem('canva_pkce_verifier');
+                    localStorage.removeItem('canva_oauth_state');
+
+                    showCreateStep();
+                } catch (err) {
+                    showError(`Erro ao autenticar com o Canva: ${err.message}`);
+                    console.error(err);
+                }
+            }
+
+            /**
+             * Initiates the design creation process in the Canva editor.
+             */
+            async function createCanvaDesign() {
+                if (!accessToken) {
+                    showError("Não autenticado. Por favor, conecte-se ao Canva primeiro.");
+                    return;
+                }
+                
+                // This URL will be part of the response from the 'create design' API call.
+                // For this example, we construct it manually.
+                const returnNavUrl = new URL(REDIRECT_URI);
+                
+                const createDesignApiUrl = 'https://api.canva.com/rest/v1/designs';
+                
+                // This is a simplified example. The actual API call would be:
+                // const response = await fetch(createDesignApiUrl, { ... });
+                // const data = await response.json();
+                // window.location.href = data.design.urls.edit_url;
+                
+                // For demonstration, we'll redirect to a generic Canva editor URL.
+                // The `design_id` will be appended to the return URL by Canva upon completion.
+                const canvaEditorUrl = `https://www.canva.com/design/new?type=flyer&mode=edit&redirect_uri=${encodeURIComponent(returnNavUrl.toString())}`;
+                
+                window.location.href = canvaEditorUrl;
+            }
+
+            /**
+             * Fetches the thumbnail for the completed design and displays it.
+             */
+            async function showPreviewStep(completedDesignId) {
+                showPreviewSpinner(true);
+                authStep.classList.add('hidden');
+                createStep.classList.add('hidden');
+                previewStep.classList.remove('hidden');
+
+                if (!accessToken) {
+                    showError("Sessão expirada. Por favor, conecte-se novamente para ver seu design.");
+                    showPreviewSpinner(false);
+                    return;
+                }
+
+                try {
+                    // In a real app, you would fetch the thumbnail URL from Canva's API
+                    // using the accessToken and completedDesignId.
+                    // const response = await fetch(`https://api.canva.com/rest/v1/designs/${completedDesignId}`, { ... });
+                    // const data = await response.json();
+                    // const thumbnailUrl = data.design.thumbnail.url;
+                    
+                    // For this demo, we use a placeholder image.
+                    const thumbnailUrl = `https://placehold.co/600x400/FBBF24/111827?text=Seu+Design+de+Canva+(ID:${completedDesignId.substring(0, 8)}...)`;
+                    
+                    designThumbnail.src = thumbnailUrl;
+                    designThumbnail.classList.remove('hidden');
+                    sendToPrintButton.classList.remove('hidden');
+
+                } catch (err) {
+                    showError("Não foi possível carregar a prévia do design.");
+                    console.error(err);
+                } finally {
+                    showPreviewSpinner(false);
+                }
+            }
+            
+            // --- UI Helper Functions ---
+            function showCreateStep() {
+                authStep.classList.add('hidden');
+                previewStep.classList.add('hidden');
+                createStep.classList.remove('hidden');
+            }
+            
+            function showPreviewSpinner(show) {
+                previewSpinner.classList.toggle('hidden', !show);
+                previewPlaceholder.classList.toggle('hidden', show);
+            }
+
+            function showError(msg) {
+                errorMessage.textContent = msg;
+                errorMessage.classList.remove('hidden');
+                setTimeout(() => errorMessage.classList.add('hidden'), 5000);
+            }
+            
+            function showSuccess(msg) {
+                successMessage.textContent = msg;
+                successMessage.classList.remove('hidden');
+                setTimeout(() => successMessage.classList.add('hidden'), 5000);
+            }
+        });
+    </script>
+</body>
+
+</html>
